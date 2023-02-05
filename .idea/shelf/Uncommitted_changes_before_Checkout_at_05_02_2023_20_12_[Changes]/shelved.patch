@@ -1,0 +1,376 @@
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>org.example</groupId>\r\n    <artifactId>TaskJDBC</artifactId>\r\n    <version>1.0-SNAPSHOT</version>\r\n    <build>\r\n        <plugins>\r\n            <plugin>\r\n                <groupId>org.apache.maven.plugins</groupId>\r\n                <artifactId>maven-compiler-plugin</artifactId>\r\n                <configuration>\r\n                    <source>17</source>\r\n                    <target>17</target>\r\n                </configuration>\r\n            </plugin>\r\n        </plugins>\r\n    </build>\r\n\r\n    <dependencies>\r\n<!--         Ваши зависимости-->\r\n         <!-- https://mvnrepository.com/artifact/junit/junit -->\r\n         <dependency>\r\n             <groupId>junit</groupId>\r\n             <artifactId>junit</artifactId>\r\n             <version>4.13.2</version>\r\n             <scope>test</scope>\r\n         </dependency>\r\n\r\n        <dependency>\r\n            <groupId>mysql</groupId>\r\n            <artifactId>mysql-connector-java</artifactId>\r\n            <version>8.0.25</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.hibernate.javax.persistence</groupId>\r\n            <artifactId>hibernate-jpa-2.1-api</artifactId>\r\n            <version>1.0.2.Final</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.hibernate</groupId>\r\n            <artifactId>hibernate-core</artifactId>\r\n            <version>5.6.3.Final</version>\r\n        </dependency>\r\n     </dependencies>\r\n\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision 0aea09763f981f81c8c9adf5780fff6bf47c9804)
++++ b/pom.xml	(date 1675617083669)
+@@ -33,7 +33,7 @@
+         <dependency>
+             <groupId>mysql</groupId>
+             <artifactId>mysql-connector-java</artifactId>
+-            <version>8.0.25</version>
++            <version>8.0.28</version>
+         </dependency>
+ 
+         <dependency>
+@@ -45,7 +45,7 @@
+         <dependency>
+             <groupId>org.hibernate</groupId>
+             <artifactId>hibernate-core</artifactId>
+-            <version>5.6.3.Final</version>
++            <version>5.6.1.Final</version>
+         </dependency>
+      </dependencies>
+ 
+Index: src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jm.task.core.jdbc.dao;\r\n\r\nimport jm.task.core.jdbc.model.User;\r\n\r\nimport java.util.List;\r\n\r\npublic class UserDaoHibernateImpl implements UserDao {\r\n    public UserDaoHibernateImpl() {\r\n\r\n    }\r\n\r\n\r\n    @Override\r\n    public void createUsersTable() {\r\n\r\n    }\r\n\r\n    @Override\r\n    public void dropUsersTable() {\r\n\r\n    }\r\n\r\n    @Override\r\n    public void saveUser(String name, String lastName, byte age) {\r\n\r\n    }\r\n\r\n    @Override\r\n    public void removeUserById(long id) {\r\n\r\n    }\r\n\r\n    @Override\r\n    public List<User> getAllUsers() {\r\n        return null;\r\n    }\r\n\r\n    @Override\r\n    public void cleanUsersTable() {\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java b/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java
+--- a/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java	(revision 0aea09763f981f81c8c9adf5780fff6bf47c9804)
++++ b/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java	(date 1675617083680)
+@@ -1,42 +1,111 @@
+ package jm.task.core.jdbc.dao;
+ 
+ import jm.task.core.jdbc.model.User;
++import jm.task.core.jdbc.util.Util;
++import org.hibernate.Session;
++import org.hibernate.Transaction;
++import org.hibernate.query.Query;
+ 
++import java.util.ArrayList;
+ import java.util.List;
+ 
++
+ public class UserDaoHibernateImpl implements UserDao {
++
+     public UserDaoHibernateImpl() {
+-
+     }
+ 
+ 
+     @Override
+     public void createUsersTable() {
+-
++        try (Session session = Util.getSessionFactory().getCurrentSession()) {
++            session.beginTransaction();
++            session.createSQLQuery("CREATE TABLE IF NOT EXISTS users" +
++                    "(id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), lastName VARCHAR(255), age TINYINT)").executeUpdate();
++            session.getTransaction().commit();
++        }
++        catch (Exception e) {
++            e.printStackTrace();
++        }
+     }
+ 
+     @Override
+     public void dropUsersTable() {
+-
++        try (Session session = Util.getSessionFactory().getCurrentSession()) {
++            session.beginTransaction();
++            session.createSQLQuery("DROP TABLE IF EXISTS users").executeUpdate();
++            session.getTransaction().commit();
++        }
++        catch (Exception e) {
++            e.printStackTrace();
++        }
+     }
+ 
+     @Override
+     public void saveUser(String name, String lastName, byte age) {
+-
++        Transaction transaction = null;
++        try (Session session = Util.getSessionFactory().getCurrentSession()) {
++            User user = new User(name, lastName, age);
++            transaction = session.beginTransaction();
++            session.persist(user);
++            transaction.commit();
++        }
++        catch (Exception e) {
++            if (transaction != null) {
++                transaction.rollback();
++            }
++            e.printStackTrace();
++        }
+     }
+ 
+     @Override
+     public void removeUserById(long id) {
+-
++        Transaction transaction = null;
++        try (Session session = Util.getSessionFactory().getCurrentSession()) {
++            transaction = session.beginTransaction();
++            User user = session.get(User.class, id);
++            session.remove(user);
++            transaction.commit();
++        }
++        catch (Exception e) {
++            if (transaction != null) {
++                transaction.rollback();
++            }
++            e.printStackTrace();
++        }
+     }
+ 
+     @Override
+     public List<User> getAllUsers() {
+-        return null;
++        List<User> users = new ArrayList<>();
++        Transaction transaction = null;
++        try (Session session = Util.getSessionFactory().getCurrentSession()) {
++            transaction = session.beginTransaction();
++            Query<User> query = session.createQuery("from User ", User.class);
++            users = query.list();
++        }
++        catch (Exception e) {
++            if (transaction != null) {
++                transaction.rollback();
++            }
++            e.printStackTrace();
++        }
++        return users;
+     }
+ 
+     @Override
+     public void cleanUsersTable() {
+-
++        Transaction transaction = null;
++        try (Session session = Util.getSessionFactory().getCurrentSession()) {
++            transaction = session.beginTransaction();
++            session.createSQLQuery("TRUNCATE TABLE users").executeUpdate();
++            transaction.commit();
++        }
++        catch (Exception e) {
++            if (transaction != null) {
++                transaction.rollback();
++            }
++            e.printStackTrace();
++        }
+     }
+ }
+Index: src/main/java/jm/task/core/jdbc/util/Util.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jm.task.core.jdbc.util;\r\n\r\nimport java.io.IOException;\r\nimport java.io.InputStream;\r\nimport java.net.URISyntaxException;\r\nimport java.nio.file.Files;\r\nimport java.nio.file.Paths;\r\nimport java.sql.Connection;\r\nimport java.sql.DriverManager;\r\nimport java.sql.SQLException;\r\nimport java.sql.Statement;\r\nimport java.util.Properties;\r\n\r\npublic class Util {\r\n    private static Connection connection = null;\r\n    private static Util util = null;\r\n\r\n    private Util() {\r\n        try {\r\n            if (null == connection || connection.isClosed()) {\r\n                Properties props = getProps();\r\n                connection = DriverManager\r\n                        .getConnection(props.getProperty(\"db.url\"), props.getProperty(\"db.username\"), props.getProperty(\"db.password\"));\r\n            }\r\n        } catch (SQLException | IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    public static Util getInstance() {\r\n        if (null == util) {\r\n            util = new Util();\r\n        }\r\n        return util;\r\n    }\r\n\r\n    public Connection getConnection() {\r\n        return connection;\r\n    }\r\n\r\n    private static Properties getProps() throws IOException {\r\n        Properties props = new Properties();\r\n        try (InputStream in = Files.newInputStream(Paths.get(Util.class.getResource(\"/database.properties\").toURI()))) {\r\n            props.load(in);\r\n            return props;\r\n        } catch (IOException | URISyntaxException e) {\r\n            throw new IOException(\"Database config file not found\", e);\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/jm/task/core/jdbc/util/Util.java b/src/main/java/jm/task/core/jdbc/util/Util.java
+--- a/src/main/java/jm/task/core/jdbc/util/Util.java	(revision 0aea09763f981f81c8c9adf5780fff6bf47c9804)
++++ b/src/main/java/jm/task/core/jdbc/util/Util.java	(date 1675617095171)
+@@ -8,14 +8,12 @@
+ import java.sql.Connection;
+ import java.sql.DriverManager;
+ import java.sql.SQLException;
+-import java.sql.Statement;
++import java.util.Objects;
+ import java.util.Properties;
+ 
+ public class Util {
+     private static Connection connection = null;
+-    private static Util util = null;
+-
+-    private Util() {
++    public static Connection getConnection() {
+         try {
+             if (null == connection || connection.isClosed()) {
+                 Properties props = getProps();
+@@ -25,22 +23,12 @@
+         } catch (SQLException | IOException e) {
+             e.printStackTrace();
+         }
+-    }
+-
+-    public static Util getInstance() {
+-        if (null == util) {
+-            util = new Util();
+-        }
+-        return util;
+-    }
+-
+-    public Connection getConnection() {
+         return connection;
+     }
+ 
+     private static Properties getProps() throws IOException {
+         Properties props = new Properties();
+-        try (InputStream in = Files.newInputStream(Paths.get(Util.class.getResource("/database.properties").toURI()))) {
++        try (InputStream in = Files.newInputStream(Paths.get(Objects.requireNonNull(Util.class.getResource("/database.properties")).toURI()))) {
+             props.load(in);
+             return props;
+         } catch (IOException | URISyntaxException e) {
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"e512abbb-0a99-4df7-9119-a22efb3b169c\" name=\"Changes\" comment=\"Commit\">\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/dataSources.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/dbnavigator.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/encodings.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/jpa-buddy-datasource.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/jpa-buddy.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/sqlDataSources.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/sqldialects.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.jpb/persistence-units.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/resources/database.properties\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/misc.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/misc.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/pom.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/pom.xml\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"AnnotationType\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n    <option name=\"UPDATE_TYPE\" value=\"REBASE\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"MavenImportPreferences\">\r\n    <option name=\"importingSettings\">\r\n      <MavenImportingSettings>\r\n        <option name=\"jdkForImporter\" value=\"19\" />\r\n        <option name=\"workspaceImportEnabled\" value=\"true\" />\r\n      </MavenImportingSettings>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"CurrentFile\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2L3UqgGoeqxmB9lHrf5uSdWpJT1\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  },\r\n  &quot;keyToStringList&quot;: {\r\n    &quot;DatabaseDriversLRU&quot;: [\r\n      &quot;mysql&quot;\r\n    ]\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CreateClassDialog.RecentsKey\">\r\n      <recent name=\"jm.task.core.jdbc.model\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Application.Main\">\r\n    <configuration name=\"Main\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"jm.task.core.jdbc.Main\" />\r\n      <module name=\"TaskJDBC\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"jm.task.core.jdbc.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"UserServiceTest\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"TaskJDBC\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"UserServiceTest\" />\r\n      <option name=\"TEST_OBJECT\" value=\"class\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.Main\" />\r\n        <item itemvalue=\"JUnit.UserServiceTest\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"e512abbb-0a99-4df7-9119-a22efb3b169c\" name=\"Changes\" comment=\"\" />\r\n      <created>1675099455655</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1675099455655</updated>\r\n      <workItem from=\"1675099456907\" duration=\"1000\" />\r\n      <workItem from=\"1675107707405\" duration=\"486000\" />\r\n      <workItem from=\"1675274886872\" duration=\"1179000\" />\r\n      <workItem from=\"1675363916085\" duration=\"2477000\" />\r\n      <workItem from=\"1675367634640\" duration=\"8409000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"master/main\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"XSLT-Support.FileAssociations.UIState\">\r\n    <expand />\r\n    <select />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 0aea09763f981f81c8c9adf5780fff6bf47c9804)
++++ b/.idea/workspace.xml	(date 1675617095425)
+@@ -5,18 +5,19 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="e512abbb-0a99-4df7-9119-a22efb3b169c" name="Changes" comment="Commit">
+-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/jpa-buddy-datasource.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/jpa-buddy.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/sqlDataSources.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.jpb/persistence-units.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/resources/database.properties" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b/storage_v2/_src_/schema/information_schema.FNRwLQ.zip" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b/storage_v2/_src_/schema/mysql.osA4Bg.meta" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b/storage_v2/_src_/schema/sakila.oXLGyQ.meta" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b/storage_v2/_src_/schema/sakila.oXLGyQ.zip" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b/storage_v2/_src_/schema/sys.zb4BAA.meta" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b3c2af94-e1a8-4aff-969e-a1c6e8ef3b7b/storage_v2/_src_/schema/sys.zb4BAA.zip" beforeDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/jm/task/core/jdbc/dao/UserDaoJDBCImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/jm/task/core/jdbc/dao/UserDaoJDBCImpl.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/jm/task/core/jdbc/util/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/jm/task/core/jdbc/util/Util.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -31,8 +32,26 @@
+     </option>
+   </component>
+   <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="1.1.4" />
++      </map>
++    </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+     <option name="UPDATE_TYPE" value="REBASE" />
++  </component>
++  <component name="GitHubPullRequestSearchHistory">{
++  &quot;lastFilter&quot;: {
++    &quot;state&quot;: &quot;OPEN&quot;
++  }
++}</component>
++  <component name="GithubPullRequestsUISettings">
++    <option name="selectedUrlAndAccountId">
++      <UrlAndAccount>
++        <option name="accountId" value="8630e663-bd67-461f-910a-12042bb9402f" />
++        <option name="url" value="https://github.com/Moonlight-afk/Kata" />
++      </UrlAndAccount>
++    </option>
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+@@ -122,8 +141,17 @@
+       <workItem from="1675107707405" duration="486000" />
+       <workItem from="1675274886872" duration="1179000" />
+       <workItem from="1675363916085" duration="2477000" />
+-      <workItem from="1675367634640" duration="8409000" />
++      <workItem from="1675367634640" duration="9914000" />
++      <workItem from="1675430897963" duration="3649000" />
++    </task>
++    <task id="LOCAL-00001" summary="Commit">
++      <created>1675378522868</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1675378522869</updated>
+     </task>
++    <option name="localTasksCounter" value="2" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -140,7 +168,7 @@
+                   <entry key="branch">
+                     <value>
+                       <list>
+-                        <option value="master/main" />
++                        <option value="master/master" />
+                       </list>
+                     </value>
+                   </entry>
+@@ -151,6 +179,10 @@
+         </entry>
+       </map>
+     </option>
++  </component>
++  <component name="VcsManagerConfiguration">
++    <MESSAGE value="Commit" />
++    <option name="LAST_COMMIT_MESSAGE" value="Commit" />
+   </component>
+   <component name="XSLT-Support.FileAssociations.UIState">
+     <expand />
+Index: src/main/java/jm/task/core/jdbc/model/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jm.task.core.jdbc.model;\r\n\r\nimport javax.persistence.Column;\r\nimport javax.persistence.Id;\r\nimport javax.persistence.Table;\r\n\r\n@Table\r\npublic class User {\r\n    @Id\r\n    private Long id;\r\n\r\n    @Column\r\n    private String name;\r\n\r\n    @Column\r\n    private String lastName;\r\n\r\n    @Column\r\n    private Byte age;\r\n\r\n    public User() {\r\n\r\n    }\r\n\r\n    public User(String name, String lastName, Byte age) {\r\n        this.name = name;\r\n        this.lastName = lastName;\r\n        this.age = age;\r\n    }\r\n\r\n    public Long getId() {\r\n        return id;\r\n    }\r\n\r\n    public void setId(Long id) {\r\n        this.id = id;\r\n    }\r\n\r\n    public String getName() {\r\n        return name;\r\n    }\r\n\r\n    public void setName(String name) {\r\n        this.name = name;\r\n    }\r\n\r\n    public String getLastName() {\r\n        return lastName;\r\n    }\r\n\r\n    public void setLastName(String lastName) {\r\n        this.lastName = lastName;\r\n    }\r\n\r\n    public Byte getAge() {\r\n        return age;\r\n    }\r\n\r\n    public void setAge(Byte age) {\r\n        this.age = age;\r\n    }\r\n\r\n    @Override\r\n    public String toString() {\r\n        return String.format(\"User {id = '%s', name = '%s', lastName = '%s', age = '%d'}\", getId(), getName(), getLastName(), getAge());\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/jm/task/core/jdbc/model/User.java b/src/main/java/jm/task/core/jdbc/model/User.java
+--- a/src/main/java/jm/task/core/jdbc/model/User.java	(revision 0aea09763f981f81c8c9adf5780fff6bf47c9804)
++++ b/src/main/java/jm/task/core/jdbc/model/User.java	(date 1675617097964)
+@@ -1,11 +1,12 @@
+ package jm.task.core.jdbc.model;
+ 
+-import javax.persistence.Column;
+-import javax.persistence.Id;
+-import javax.persistence.Table;
++import javax.persistence.*;
+ 
+-@Table
++@Entity
++@Table(name = "users")
+ public class User {
++    @Column
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
+     @Id
+     private Long id;
+ 
+Index: src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jm.task.core.jdbc.service;\r\n\r\nimport jm.task.core.jdbc.dao.UserDao;\r\nimport jm.task.core.jdbc.dao.UserDaoJDBCImpl;\r\nimport jm.task.core.jdbc.model.User;\r\n\r\nimport java.util.List;\r\n\r\npublic class UserServiceImpl implements UserService {\r\n    UserDao userDao = new UserDaoJDBCImpl();\r\n    public void createUsersTable() {\r\n        userDao.createUsersTable();\r\n    }\r\n\r\n    public void dropUsersTable() {\r\n        userDao.dropUsersTable();\r\n    }\r\n\r\n    public void saveUser(String name, String lastName, byte age) {\r\n        userDao.saveUser(name, lastName, age);\r\n        System.out.println(\"User с именем – \" + name + \" добавлен в базу данных\");\r\n    }\r\n\r\n    public void removeUserById(long id) {\r\n        userDao.removeUserById(id);\r\n    }\r\n\r\n    public List<User> getAllUsers() {\r\n        List<User> users =  userDao.getAllUsers();\r\n        for (User user : users) {\r\n            System.out.println(user);\r\n        }\r\n        return users;\r\n    }\r\n\r\n    public void cleanUsersTable() {\r\n        userDao.cleanUsersTable();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java b/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java
+--- a/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java	(revision 0aea09763f981f81c8c9adf5780fff6bf47c9804)
++++ b/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java	(date 1675617098186)
+@@ -4,10 +4,14 @@
+ import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
+ import jm.task.core.jdbc.model.User;
+ 
++import java.math.BigDecimal;
++import java.sql.*;
++import java.util.Collection;
+ import java.util.List;
+ 
+ public class UserServiceImpl implements UserService {
+     UserDao userDao = new UserDaoJDBCImpl();
++
+     public void createUsersTable() {
+         userDao.createUsersTable();
+     }
+@@ -26,7 +30,7 @@
+     }
+ 
+     public List<User> getAllUsers() {
+-        List<User> users =  userDao.getAllUsers();
++        List<User> users = userDao.getAllUsers();
+         for (User user : users) {
+             System.out.println(user);
+         }

@@ -1,5 +1,9 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -13,6 +17,32 @@ import java.util.Properties;
 
 public class Util {
     private static Connection connection = null;
+
+    private static SessionFactory sessionFactory;
+
+    public static SessionFactory getSessionFactory() {
+        Properties properties = new Properties();
+        if (sessionFactory == null) {
+            try {
+                properties.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/test");
+                properties.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
+                properties.setProperty("hibernate.connection.username", "root");
+                properties.setProperty("hibernate.connection.password", "root");
+                properties.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
+                properties.setProperty("show_sql", "true");
+                properties.setProperty("hibernate.current_session_context_class", "thread");
+
+                properties.setProperty("hibernate.hbm2ddl.auto", "");
+
+                sessionFactory = new Configuration().addProperties(properties)
+                        .addAnnotatedClass(User.class)
+                        .buildSessionFactory();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return sessionFactory;
+    }
     public static Connection getConnection() {
         try {
             if (null == connection || connection.isClosed()) {
